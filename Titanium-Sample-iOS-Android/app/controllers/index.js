@@ -1,40 +1,52 @@
-function doClick(e) {
-    alert($.label.text);
-}
 
 $.index.open();
 
-var pushnotifications = require('com.pushwoosh.module');
-Ti.API.info("module is => " + pushnotifications);
+var pushwoosh = require('com.pushwoosh.module');
+Ti.API.info("module is => " + pushwoosh);
 
-pushnotifications.pushNotificationsRegister({
-  "pw_appid": "4FC89B6D14A655.46488481",
-  "gcm_projectid": "60756016005", // please note this is the project "number" not the "id" when viewed in the google API console.  You can find this under the project settings.
-  success:function(e)
-  {
-    setTimeout(function() {
-      Ti.API.info('JS registration success event: ' + e.registrationId);
-    }, 0);
-  },
-  error:function(e)
-  {
-    setTimeout(function() {
-      Ti.API.error("Error during registration: "+e.error);
-    }, 0);
-  },
-  callback:function(e) // called when a push notification is received
-  {
-    setTimeout(function() {
-      //push notifications title: e.data.aps.alert
-      Ti.API.info('JS message event: ' + JSON.stringify(e.data));
-    }, 0);
-  }
+pushwoosh.onPushReceived(function(e) {
+	Ti.API.info('Push notification received: ' + JSON.stringify(e));
 });
 
-pushnotifications.setTags({deviceName:"hello", deviceId:10});
+pushwoosh.onPushOpened(function(e) {
+	Ti.API.info('Push notification opened: ' + JSON.stringify(e));
+	$.pushMessage.text = e.message;
+	$.pushData.text = JSON.stringify(e);
+});
 
-//setings list tags "MyTag" with values (array) "hello", "world"
-pushnotifications.setTags({"MyTag":["hello", "world"]});
+pushwoosh.initialize({ 
+    "application" : "4FC89B6D14A655.46488481",
+    "gcm_project" : "60756016005"
+});
 
-pushnotifications.startTrackingGeoPushes();
-pushnotifications.stopTrackingGeoPushes();
+pushwoosh.registerForPushNotifications(
+	function(e) {
+        Ti.API.info('JS registration success event: ' + e.registrationId);
+        Ti.API.info('Push token ' + pushwoosh.getPushToken());
+        $.pushRegistration.text = "Registered with token: " + e.registrationId;
+        
+    },
+    function(e) {
+        Ti.API.error("Error during registration: " + e.error);
+        $.pushRegistration.text = "Failed to register: " + e.error;
+    }  
+);
+
+Ti.API.info('Pushwoosh hwid: ' + pushwoosh.getHwid());
+
+// Application icon badges
+//pushwoosh.setBadgeNumber(5);
+//pushwoosh.addBadgeNumber(3);
+//Ti.API.info('Badge number: ' + pushwoosh.getBadgeNumber());
+
+// Segmentation
+//pushwoosh.setTags({deviceName:"hello", deviceId:10});
+//pushwoosh.setTags({"MyTag":["hello", "world"]});
+
+// Geopushes
+//pushwoosh.startTrackingGeoPushes();
+//pushwoosh.stopTrackingGeoPushes();
+
+// Inapp & Events
+//pushwoosh.setUserId("pushwooshid%42");
+//pushwoosh.postEvent("buttonPressed", { "buttonNumber" : 4, "buttonLabel" : "banner" });

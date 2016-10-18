@@ -1,3 +1,18 @@
+Current version: 2.0.1
+=========================
+[iOS] Fixed referencing non-Public API to pass project validation
+Current version: 2.0.0
+=========================
+Separate methods for initializing, registering and receiving push notifications
+[In-App Messages](http://docs.pushwoosh.com/docs/in-app-messages) support
+Additional push notification info: custom data, is foreground and push message
+getHwid and getPushToken methods
+Current version: 1.3.4
+=========================
+Publish: Pushwoosh SDK update
+Current version: 1.3.3
+=========================
+[Android] unregister method stability fix
 Current version: 1.3.2
 =========================
 Publish: [Android] Trimmed google-play-services.jar to only include select parts
